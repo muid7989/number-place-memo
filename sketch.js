@@ -6,8 +6,9 @@ const CANVAS_W = 960;
 const CANVAS_H = 1280;
 
 const GRID_SIZE = 64;
-const GRID_BASE_X = GRID_SIZE*1.5;
-const GRID_BASE_Y = GRID_SIZE*3;
+const BASE_X = GRID_SIZE*0.75;
+const BASE_Y = GRID_SIZE*0.75;
+const UNIT_SIZE = GRID_SIZE*1.5;
 
 const BUTTON_OFFSET = 8;
 const BUTTON_W = GRID_SIZE*2;
@@ -16,14 +17,15 @@ const BUTTON_Y = GRID_SIZE*8;
 const BUTTON_X = GRID_SIZE*13;
 const BUTTON_M = 24;
 
-const CURSOR_SIZE = 64;
+const CURSOR_SIZE = GRID_SIZE*1.5;
 const CURSOR_COLOR = 'orange';
 const CURSOR_STROKE = 8;
-const CURSOR_MIN_X = GRID_SIZE*1;
-const CURSOR_MIN_Y = GRID_SIZE*1;
-const CURSOR_MAX_X = GRID_SIZE*14;
-const CURSOR_MAX_Y = GRID_SIZE*14;
-const MOVE_UNIT = 32;
+const CURSOR_MIN_X = GRID_SIZE*1.5;
+const CURSOR_MIN_Y = GRID_SIZE*1.5;
+const CURSOR_MAX_X = GRID_SIZE*13.5;
+const CURSOR_MAX_Y = GRID_SIZE*13.5;
+const MOVE_UNIT = GRID_SIZE*1.5;
+const MOVE_RANGE = 3;
 
 const JOYSTICK_X = CANVAS_W-GRID_SIZE*2;
 const JOYSTICK_Y = CANVAS_H-GRID_SIZE*2;
@@ -31,7 +33,9 @@ const JOYSTICK_SIZE = GRID_SIZE*3;
 const JOYSTICK_RANGE = GRID_SIZE*2;
 const JOYSTICK_SUM_C = 4;
 let joystick;
-const IMAGE_Y = GRID_SIZE;
+const IMAGE_X = BASE_X;
+const IMAGE_Y = BASE_Y;
+const IMAGE_W = UNIT_SIZE*9;
 
 const NUM_BUTTON_W = GRID_SIZE*1.2;
 const NUM_BUTTON_H = GRID_SIZE;
@@ -51,7 +55,7 @@ const TEMP_MARK_POS = {
 	8: {x: 0, y: 1},
 	9: {x: 1, y: 1}
 };
-const TEMP_MARK_OFFSET = 24;
+const TEMP_MARK_OFFSET = 32;
 
 let markRecord;
 let markData;
@@ -106,6 +110,7 @@ function cursorInit() {
 	cursor.pos = {};
 	cursor.pos.x = CURSOR_MIN_X;
 	cursor.pos.y = CURSOR_MIN_Y;
+	cursor.tPos = {};
 }
 function numButtonInit() {
 	for (let i=0; i<9; i++){
@@ -177,7 +182,7 @@ function cursorMove(x, y) {
 	}
 }
 function draw() {
-	background(128);
+	background(32);
 	let current = millis();
 	if ( (current-time)>=1000 ){
 		time += 1000;
@@ -193,6 +198,15 @@ function draw() {
 		for (let i=0; i<CANVAS_W/GRID_SIZE; i++){
 			line(i*GRID_SIZE, 0, i*GRID_SIZE, CANVAS_H);
 		}
+	}
+	image(qImage, IMAGE_X, IMAGE_Y, IMAGE_W);
+	stroke(200);
+	strokeWeight(3);
+	for (let i=0; i<10; i++){
+		line(BASE_X, BASE_Y+UNIT_SIZE*i, BASE_X+UNIT_SIZE*9, BASE_Y+UNIT_SIZE*i);
+	}
+	for (let i=0; i<10; i++){
+		line(BASE_X+UNIT_SIZE*i, BASE_Y, BASE_X+UNIT_SIZE*i, BASE_Y+UNIT_SIZE*9);
 	}
 	if (joystick.control){
 		if (joystick.pos.x>=JOYSTICK_X+JOYSTICK_RANGE){
@@ -211,6 +225,7 @@ function draw() {
 	}
 	joystick.x = (joystick.pos.x-JOYSTICK_X)/JOYSTICK_RANGE;
 	joystick.y = (joystick.pos.y-JOYSTICK_Y)/JOYSTICK_RANGE;
+/*
 	joystick.sum.x += joystick.x;
 	if (joystick.sum.x>JOYSTICK_SUM_C){
 		cursorMove(MOVE_UNIT, 0);
@@ -227,19 +242,26 @@ function draw() {
 		cursorMove(0, -MOVE_UNIT);
 		joystick.sum.y += JOYSTICK_SUM_C;
 	}
-
-	image(qImage, 0, 0);
+*/
+	if (joystick.control){
+		cursor.pos.x = cursor.tPos.x;
+		cursor.pos.y = cursor.tPos.y;
+		cursorMove(int(joystick.x*MOVE_RANGE)*MOVE_UNIT, int(joystick.y*MOVE_RANGE)*MOVE_UNIT);
+	}else{
+		cursor.tPos.x = cursor.pos.x;
+		cursor.tPos.y = cursor.pos.y;
+	}
 	noStroke();
 	for (let i=0; i<markRecord.length; i++){
 		if (markRecord[i].temp){
 			fill(48);
-			textSize(20);
+			textSize(24);
 			const tx = markRecord[i].x+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].x;
 			const ty = markRecord[i].y+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].y;
 			text(markRecord[i].num, tx, ty);
 		}else{
 			fill(0);
-			textSize(64);
+			textSize(72);
 			text(markRecord[i].num, markRecord[i].x, markRecord[i].y);
 		}
 	}
