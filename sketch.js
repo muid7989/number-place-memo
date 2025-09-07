@@ -228,7 +228,7 @@ function draw() {
 		joystick.sum.y += JOYSTICK_SUM_C;
 	}
 
-	image(qImage, 0, 0);
+//	image(qImage, 0, 0);
 	noStroke();
 	for (let i=0; i<markRecord.length; i++){
 		if (markRecord[i].temp){
