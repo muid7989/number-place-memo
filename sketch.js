@@ -3,7 +3,7 @@ let frameCountBuffer = 0;
 let fps = 0;
 
 const CANVAS_W = 960;
-const CANVAS_H = 1920;
+const CANVAS_H = 1280;
 
 const GRID_SIZE = 64;
 const GRID_BASE_X = GRID_SIZE*1.5;
@@ -26,7 +26,7 @@ const CURSOR_MAX_Y = GRID_SIZE*14;
 const MOVE_UNIT = 32;
 
 const JOYSTICK_X = GRID_SIZE*8;
-const JOYSTICK_Y = GRID_SIZE*26;
+const JOYSTICK_Y = GRID_SIZE*12;
 const JOYSTICK_SIZE = GRID_SIZE*3;
 const JOYSTICK_RANGE = GRID_SIZE*2;
 const JOYSTICK_SUM_C = 4;
@@ -36,7 +36,7 @@ const IMAGE_Y = GRID_SIZE;
 const NUM_BUTTON_W = GRID_SIZE*1.2;
 const NUM_BUTTON_H = GRID_SIZE;
 const NUM_BUTTON_X = GRID_SIZE*1;
-const NUM_BUTTON_Y = GRID_SIZE*20;
+const NUM_BUTTON_Y = GRID_SIZE*15;
 const NUM_BUTTON_INT = GRID_SIZE*1.5;
 let numButton = [];
 let tempNumButton = [];
@@ -228,7 +228,7 @@ function draw() {
 		joystick.sum.y += JOYSTICK_SUM_C;
 	}
 
-//	image(qImage, 0, 0);
+	image(qImage, 0, 0);
 	noStroke();
 	for (let i=0; i<markRecord.length; i++){
 		if (markRecord[i].temp){
