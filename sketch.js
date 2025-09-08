@@ -246,7 +246,7 @@ function draw() {
 			line(i*GRID_SIZE, 0, i*GRID_SIZE, CANVAS_H);
 		}
 	}
-	image(qImage, IMAGE_X, IMAGE_Y, IMAGE_W);
+	image(qImage, IMAGE_X, IMAGE_Y, IMAGE_W, IMAGE_W);
 	stroke(200);
 	strokeWeight(3);
 	for (let i=0; i<10; i++){
