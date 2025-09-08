@@ -20,11 +20,13 @@ const BUTTON_M = 24;
 const CURSOR_SIZE = GRID_SIZE*1.5;
 const CURSOR_COLOR = 'orange';
 const CURSOR_STROKE = 8;
-const CURSOR_MIN_X = GRID_SIZE*1.5;
-const CURSOR_MIN_Y = GRID_SIZE*1.5;
-const CURSOR_MAX_X = GRID_SIZE*13.5;
-const CURSOR_MAX_Y = GRID_SIZE*13.5;
+const CURSOR_MIN_X = 0;
+const CURSOR_MIN_Y = 0;
+const CURSOR_MAX_X = 8;
+const CURSOR_MAX_Y = 8;
 const MOVE_UNIT = GRID_SIZE*1.5;
+const CURSOR_BASE_X = BASE_X+MOVE_UNIT*0.5;
+const CURSOR_BASE_Y = BASE_Y+MOVE_UNIT*0.5;
 const MOVE_RANGE = 3;
 
 const JOYSTICK_X = CANVAS_W-GRID_SIZE*2;
@@ -139,6 +141,7 @@ function numButtonFn(n) {
 		num: n, temp: false
 	};
 	markRecord.push(mark);
+	addMarkData(mark);
 //	console.log(markData);
 }
 function tempNumButtonFn(n) {
@@ -147,12 +150,56 @@ function tempNumButtonFn(n) {
 		num: n, temp: true
 	};
 	markRecord.push(mark);
+	addMarkData(mark);
 }
 function addMarkData(mark) {
-
+	const r = searchMarkData(mark.x, mark.y);
+	if (r<0){
+		let data = {};
+		data.x = mark.x;
+		data.y = mark.y;
+		data.num = [];
+		data.tempNum = [];
+		if (mark.temp){
+			data.tempNum.push(mark.num);
+		}else{
+			data.num.push(mark.num);
+		}
+		markData.push(data);
+	}else{
+		if (mark.temp){
+			const l = markData[r].tempNum.length;
+			for (let i=0; i<markData[r].tempNum.length; i++){
+				if (mark.num==markData[r].tempNum[i]){
+					markData[r].tempNum.splice(i);
+					break;
+				}
+			}
+			if (l==markData[r].tempNum.length){
+				markData[r].tempNum.push(mark.num);
+			}
+		}else{
+			const l = markData[r].num.length;
+			for (let i=0; i<markData[r].num.length; i++){
+				if (mark.num==markData[r].num[i]){
+					markData[r].num.splice(i);
+					break;
+				}
+			}
+			if (l==markData[r].num.length){
+				markData[r].num.push(mark.num);
+			}
+		}
+	}
+	console.log(markData);
 }
 function searchMarkData(x, y) {
-
+	for (let i=0; i<markData.length; i++){
+		if ((x==markData[i].x) && (y==markData[i].y)){
+			return i;
+		}
+	}
+	return -1;
 }
 function joystickInit() {
 	joystick = {};
@@ -246,30 +293,49 @@ function draw() {
 	if (joystick.control){
 		cursor.pos.x = cursor.tPos.x;
 		cursor.pos.y = cursor.tPos.y;
-		cursorMove(int(joystick.x*MOVE_RANGE)*MOVE_UNIT, int(joystick.y*MOVE_RANGE)*MOVE_UNIT);
+		cursorMove(int(joystick.x*MOVE_RANGE), int(joystick.y*MOVE_RANGE));
 	}else{
 		cursor.tPos.x = cursor.pos.x;
 		cursor.tPos.y = cursor.pos.y;
 	}
 	noStroke();
+/*
 	for (let i=0; i<markRecord.length; i++){
 		if (markRecord[i].temp){
 			fill(48);
 			textSize(24);
-			const tx = markRecord[i].x+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].x;
-			const ty = markRecord[i].y+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].y;
+			const tx = CURSOR_BASE_X+MOVE_UNIT*markRecord[i].x+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].x;
+			const ty = CURSOR_BASE_Y+MOVE_UNIT*markRecord[i].y+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].y;
 			text(markRecord[i].num, tx, ty);
 		}else{
 			fill(0);
 			textSize(72);
-			text(markRecord[i].num, markRecord[i].x, markRecord[i].y);
+			text(markRecord[i].num, CURSOR_BASE_X+MOVE_UNIT*markRecord[i].x, CURSOR_BASE_Y+MOVE_UNIT*markRecord[i].y);
 		}
 	}
-
+*/
+	for (let i=0; i<markData.length; i++){
+		const cx = CURSOR_BASE_X+MOVE_UNIT*markData[i].x;
+		const cy = CURSOR_BASE_Y+MOVE_UNIT*markData[i].y;
+		if (markData[i].num.length==0){
+			fill(48);
+			textSize(24);
+			for (let j=0; j<markData[i].tempNum.length; j++){
+				const tx = cx + TEMP_MARK_OFFSET*TEMP_MARK_POS[markData[i].tempNum[j]].x;
+				const ty = cy + TEMP_MARK_OFFSET*TEMP_MARK_POS[markData[i].tempNum[j]].y;
+				text(markData[i].tempNum[j], tx, ty);
+			}
+		}
+		fill(0);
+		textSize(72);
+		for (let j=0; j<markData[i].num.length; j++){
+			text(markData[i].num[j], cx, cy);
+		}
+	}
 	noFill();
 	stroke(CURSOR_COLOR);
 	strokeWeight(CURSOR_STROKE);
-	rect(cursor.pos.x, cursor.pos.y, CURSOR_SIZE);
+	rect(CURSOR_BASE_X+MOVE_UNIT*cursor.pos.x, CURSOR_BASE_Y+MOVE_UNIT*cursor.pos.y, CURSOR_SIZE);
 	fill(200);
 	noStroke();
 	circle(joystick.pos.x, joystick.pos.y, JOYSTICK_SIZE);
