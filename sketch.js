@@ -83,12 +83,6 @@ function setup() {
 	time = millis();
 	rectMode(CENTER);
 
-/*
-	getButton = buttonInit('sel', BUTTON_W, BUTTON_H, BUTTON_X, BUTTON_Y);
-	startButton = buttonInit('start', BUTTON_W, BUTTON_H, BUTTON_X, BUTTON_Y+BUTTON_H);
-	getButton.mousePressed(getFn);
-	startButton.mousePressed(startFn);
-*/
 	textAlign(CENTER,CENTER);
 	joystickInit();
 	numButtonInit();
@@ -98,7 +92,6 @@ function setup() {
 	fileInput = createFileInput(handleFile);
 	fileInput.style('font-size', '32px');
 	fileInput.position(24, CANVAS_H-64);
-
 }
 function buttonInit(text, w, h, x, y) {
 	let button = createButton(text);
@@ -142,7 +135,6 @@ function numButtonFn(n) {
 	};
 	markRecord.push(mark);
 	addMarkData(mark);
-//	console.log(markData);
 }
 function tempNumButtonFn(n) {
 	const mark = {
@@ -171,7 +163,7 @@ function addMarkData(mark) {
 			const l = markData[r].tempNum.length;
 			for (let i=0; i<markData[r].tempNum.length; i++){
 				if (mark.num==markData[r].tempNum[i]){
-					markData[r].tempNum.splice(i);
+					markData[r].tempNum.splice(i,1);
 					break;
 				}
 			}
@@ -182,7 +174,7 @@ function addMarkData(mark) {
 			const l = markData[r].num.length;
 			for (let i=0; i<markData[r].num.length; i++){
 				if (mark.num==markData[r].num[i]){
-					markData[r].num.splice(i);
+					markData[r].num.splice(i,1);
 					break;
 				}
 			}
@@ -191,7 +183,7 @@ function addMarkData(mark) {
 			}
 		}
 	}
-	console.log(markData);
+//	console.log(markData);
 }
 function searchMarkData(x, y) {
 	for (let i=0; i<markData.length; i++){
@@ -272,24 +264,6 @@ function draw() {
 	}
 	joystick.x = (joystick.pos.x-JOYSTICK_X)/JOYSTICK_RANGE;
 	joystick.y = (joystick.pos.y-JOYSTICK_Y)/JOYSTICK_RANGE;
-/*
-	joystick.sum.x += joystick.x;
-	if (joystick.sum.x>JOYSTICK_SUM_C){
-		cursorMove(MOVE_UNIT, 0);
-		joystick.sum.x -= JOYSTICK_SUM_C;
-	}else if (joystick.sum.x<-JOYSTICK_SUM_C){
-		cursorMove(-MOVE_UNIT, 0);
-		joystick.sum.x += JOYSTICK_SUM_C;
-	}
-	joystick.sum.y += joystick.y;
-	if (joystick.sum.y>JOYSTICK_SUM_C){
-		cursorMove(0, MOVE_UNIT);
-		joystick.sum.y -= JOYSTICK_SUM_C;
-	}else if (joystick.sum.y<-JOYSTICK_SUM_C){
-		cursorMove(0, -MOVE_UNIT);
-		joystick.sum.y += JOYSTICK_SUM_C;
-	}
-*/
 	if (joystick.control){
 		cursor.pos.x = cursor.tPos.x;
 		cursor.pos.y = cursor.tPos.y;
@@ -299,21 +273,6 @@ function draw() {
 		cursor.tPos.y = cursor.pos.y;
 	}
 	noStroke();
-/*
-	for (let i=0; i<markRecord.length; i++){
-		if (markRecord[i].temp){
-			fill(48);
-			textSize(24);
-			const tx = CURSOR_BASE_X+MOVE_UNIT*markRecord[i].x+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].x;
-			const ty = CURSOR_BASE_Y+MOVE_UNIT*markRecord[i].y+TEMP_MARK_OFFSET*TEMP_MARK_POS[markRecord[i].num].y;
-			text(markRecord[i].num, tx, ty);
-		}else{
-			fill(0);
-			textSize(72);
-			text(markRecord[i].num, CURSOR_BASE_X+MOVE_UNIT*markRecord[i].x, CURSOR_BASE_Y+MOVE_UNIT*markRecord[i].y);
-		}
-	}
-*/
 	for (let i=0; i<markData.length; i++){
 		const cx = CURSOR_BASE_X+MOVE_UNIT*markData[i].x;
 		const cy = CURSOR_BASE_Y+MOVE_UNIT*markData[i].y;
