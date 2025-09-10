@@ -6,28 +6,23 @@ const CANVAS_W = 960;
 const CANVAS_H = 1280;
 
 const GRID_SIZE = 64;
-const BASE_X = GRID_SIZE*0.75;
-const BASE_Y = GRID_SIZE*0.75;
-const UNIT_SIZE = GRID_SIZE*1.5;
+const BASE_X = GRID_SIZE*1;
+const BASE_Y = GRID_SIZE*0.5;
+const BASE_W = GRID_SIZE*13;
+const UNIT_NUM = 9;
+const UNIT_SIZE = BASE_W/UNIT_NUM;
 
-const BUTTON_OFFSET = 8;
-const BUTTON_W = GRID_SIZE*2;
-const BUTTON_H = GRID_SIZE*1;
-const BUTTON_Y = GRID_SIZE*8;
-const BUTTON_X = GRID_SIZE*13;
-const BUTTON_M = 24;
-
-const CURSOR_SIZE = GRID_SIZE*1.5;
+const CURSOR_SIZE = UNIT_SIZE*1.1;
 const CURSOR_COLOR = 'orange';
 const CURSOR_STROKE = 8;
 const CURSOR_MIN_X = 0;
 const CURSOR_MIN_Y = 0;
-const CURSOR_MAX_X = 8;
-const CURSOR_MAX_Y = 8;
-const MOVE_UNIT = GRID_SIZE*1.5;
+const CURSOR_MAX_X = UNIT_NUM-1;
+const CURSOR_MAX_Y = UNIT_NUM-1;
+const MOVE_UNIT = BASE_W/UNIT_NUM;
 const CURSOR_BASE_X = BASE_X+MOVE_UNIT*0.5;
 const CURSOR_BASE_Y = BASE_Y+MOVE_UNIT*0.5;
-const MOVE_RANGE = 3;
+const MOVE_RANGE = 4;
 
 const JOYSTICK_X = CANVAS_W-GRID_SIZE*2;
 const JOYSTICK_Y = CANVAS_H-GRID_SIZE*2;
@@ -37,12 +32,12 @@ const JOYSTICK_SUM_C = 4;
 let joystick;
 const IMAGE_X = BASE_X;
 const IMAGE_Y = BASE_Y;
-const IMAGE_W = UNIT_SIZE*9;
+const IMAGE_W = BASE_W;
 
 const NUM_BUTTON_W = GRID_SIZE*1.2;
 const NUM_BUTTON_H = GRID_SIZE;
 const NUM_BUTTON_X = GRID_SIZE*1;
-const NUM_BUTTON_Y = GRID_SIZE*15;
+const NUM_BUTTON_Y = GRID_SIZE*14;
 const NUM_BUTTON_INT = GRID_SIZE*1.5;
 let numButton = [];
 let tempNumButton = [];
@@ -70,7 +65,7 @@ const DEBUG_VIEW_Y = 20;
 const DEBUG_VIEW_H = 20;
 
 function preload() {
-	qImage = loadImage('./sample.JPG');
+//	qImage = loadImage('./sample.JPG');
 }
 function handleFile(file) {
 	if (file.type == 'image') {
@@ -92,13 +87,6 @@ function setup() {
 	fileInput = createFileInput(handleFile);
 	fileInput.style('font-size', '32px');
 	fileInput.position(24, CANVAS_H-64);
-}
-function buttonInit(text, w, h, x, y) {
-	let button = createButton(text);
-	button.size(w,h);
-	button.position(x+BUTTON_OFFSET,y+BUTTON_OFFSET);
-	button.style('font-size', '48px');
-	return button;
 }
 function cursorInit() {
 	cursor = {};
@@ -238,14 +226,16 @@ function draw() {
 			line(i*GRID_SIZE, 0, i*GRID_SIZE, CANVAS_H);
 		}
 	}
-	image(qImage, IMAGE_X, IMAGE_Y, IMAGE_W, IMAGE_W);
+	if (qImage!=null){
+		image(qImage, IMAGE_X, IMAGE_Y, IMAGE_W, IMAGE_W);
+	}
 	stroke(200);
 	strokeWeight(3);
-	for (let i=0; i<10; i++){
-		line(BASE_X, BASE_Y+UNIT_SIZE*i, BASE_X+UNIT_SIZE*9, BASE_Y+UNIT_SIZE*i);
+	for (let i=0; i<UNIT_NUM+1; i++){
+		line(BASE_X, BASE_Y+UNIT_SIZE*i, BASE_X+UNIT_SIZE*UNIT_NUM, BASE_Y+UNIT_SIZE*i);
 	}
-	for (let i=0; i<10; i++){
-		line(BASE_X+UNIT_SIZE*i, BASE_Y, BASE_X+UNIT_SIZE*i, BASE_Y+UNIT_SIZE*9);
+	for (let i=0; i<UNIT_NUM+1; i++){
+		line(BASE_X+UNIT_SIZE*i, BASE_Y, BASE_X+UNIT_SIZE*i, BASE_Y+UNIT_SIZE*UNIT_NUM);
 	}
 	if (joystick.control){
 		if (joystick.pos.x>=JOYSTICK_X+JOYSTICK_RANGE){
@@ -305,8 +295,6 @@ function draw() {
 	strokeWeight(1);
 	let debugY = DEBUG_VIEW_Y;
 	text('fps:'+fps, DEBUG_VIEW_X, debugY);
-	debugY += DEBUG_VIEW_H;
-	text(joystick.x.toFixed(2)+','+joystick.y.toFixed(2), DEBUG_VIEW_X, debugY);
 }
 function touchStarted() {
 	let tp = [];
