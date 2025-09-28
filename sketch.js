@@ -15,7 +15,7 @@ const BUTTON_OFFSET = 8;
 
 const MENU_BOTTUN_W = GRID_SIZE*1.5;
 const MENU_BUTTON_H = GRID_SIZE;
-const MENU_BOTTUN_X = BUTTON_OFFSET;
+const MENU_BOTTUN_X = BUTTON_OFFSET+GRID_SIZE*0.5;
 const MENU_BOTTUN_Y = BUTTON_OFFSET+CANVAS_H-GRID_SIZE;
 
 const FILE_BUTTON_X = BUTTON_OFFSET+GRID_SIZE*2;
@@ -67,7 +67,7 @@ const TEMP_MARK_POS = {
 	9: {x: 1, y: 1}
 };
 const TEMP_MARK_OFFSET = 24;
-const TEXTSIZE_MARK = 72;
+const TEXTSIZE_MARK = 64;
 const TEXTSIZE_TEMP = 24;
 const TEXTSIZE_NUM_BUTTON = '48px';
 const TEXTSIZE_BUTTON = '32px';
@@ -145,7 +145,8 @@ function saveFn() {
 		'record': markRecord,
 		'img': imageData
 	}
-	const fileName = 'npdata_'+year()+month()+day()+hour();
+//	console.log(jsonObj);
+	const fileName = 'npdata_'+year()+month()+day()+hour()+'.json';
 	save(jsonObj, fileName);
 }
 function loadFn(file) {
